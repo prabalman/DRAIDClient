@@ -6,12 +6,15 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.MediaController;
 import android.widget.Toast;
 import android.widget.VideoView;
@@ -22,18 +25,24 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 
-
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class MainActivity extends Activity implements SensorEventListener {
 
-    final String URL = "http://192.168.0.101/create.php";
+    final String URL = "http://192.168.1.70:8099";
+    final String JAVA_URL = "http://192.168.1.71:8888/requests";
+    final String BHATEY_URL = "http://192.168.1.70:8099";
 
 
+    //    final VideoView video = (VideoView) findViewById(R.id.videoView);
+//    final String STREAM_URL = "rtsp://192.168.1.70:8095/test.mp4";
+    final String STREAM_HTML_URL = "<html><body><img src='http://192.168.1.71:9090/test.mjpeg' style='margin-top:0px;margin-left:0px' hspace='0' vspace='0' width='320' height='360'></body></html>";
     private SensorManager sensorManager;
     double xxval, yyval, zzval;
 
@@ -45,24 +54,22 @@ public class MainActivity extends Activity implements SensorEventListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        WebView webView = (WebView) findViewById(R.id.webView);
+        WebView webView2 = (WebView) findViewById(R.id.webView2);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView2.getSettings().setJavaScriptEnabled(true);
+
+        webView.getSettings().setDefaultZoom(WebSettings.ZoomDensity.FAR);
+        webView2.getSettings().setDefaultZoom(WebSettings.ZoomDensity.FAR);
+        webView.loadData(STREAM_HTML_URL, "text/html", null);
+        webView2.loadData(STREAM_HTML_URL, "text/html", null);
 
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_UI);
-
-//        VideoView video  = (VideoView) findViewById(R.id.videoView);
-//        MediaController ctrl;
-//        video.setVideoURI(Uri.parse("http://192.168.0.101:8080/test.ts"));
-//        ctrl = new MediaController(this);
-//        ctrl.setMediaPlayer(video);
-//        video.setMediaController(ctrl);
-//        video.requestFocus();
-//        video.start();
-        }
-
+    }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-
 
 
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
@@ -102,7 +109,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         public Double z;
 
 
-        public AccelTask(Double z, Double x, Double y){
+        public AccelTask(Double z, Double x, Double y) {
             this.z = z;
             this.x = x;
             this.y = y;
@@ -137,6 +144,7 @@ public class MainActivity extends Activity implements SensorEventListener {
                 e.printStackTrace();
             }
 
+
             SystemClock.sleep(1000);
             CustomRequest jsonObject = new CustomRequest(Request.Method.POST, URL, parameters, new Response.Listener<JSONObject>() {
                 @Override
@@ -144,7 +152,7 @@ public class MainActivity extends Activity implements SensorEventListener {
                     try {
                         Boolean success = response.getBoolean("success");
                         String message = response.getString("message");
-                        Log.e("JSONsend",success + message );
+                        Log.e("JSONsend", success + message);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

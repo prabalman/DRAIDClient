@@ -10,14 +10,16 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <application
-        android:name="com.android.tools.fd.runtime.BootstrapApplication"
+    <application android:name="com.android.tools.fd.runtime.BootstrapApplication" >
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
-        <activity android:name="com.example.srishansupertramp.draidclient.MainActivity" >
+        android:theme="@style/AppTheme">
+        <activity
+            android:name="com.example.srishansupertramp.draidclient.MainActivity"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
